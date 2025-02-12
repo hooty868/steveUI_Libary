@@ -437,7 +437,6 @@ export const Button = forwardRef<
         size: size === 'default' ? 'default' : size, // 把 'default' 與 'middle' 都帶給 cva
         ghost,
       }),
-      'button-with-ripple',
       classNames?.button,
     );
 

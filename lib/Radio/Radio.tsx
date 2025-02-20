@@ -58,8 +58,8 @@ const radioStyles = cva('inline-flex items-center cursor-pointer select-none rel
 });
 
 /**
- * - 直接 forwardRef 到 <input type="radio" />
- * - 由外部決定受控 or 非受控
+ * - 除了直接 forwardRef 到 <input type="radio" />
+ * - 可以由外部決定受控 or 非受控
  */
 export const Radio = forwardRef<
   HTMLInputElement,

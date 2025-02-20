@@ -1,1 +1,18 @@
 @import 'tailwindcss';
+
+@layer utilities {
+  @keyframes ripple-effect {
+    0% {
+      box-shadow: 0 0 0 0px var(--ripple-color, #0093e9);
+      opacity: 1;
+    }
+
+    100% {
+      box-shadow: 0 0 0 5px var(--ripple-color, #0093e9);
+      opacity: 0;
+    }
+  }
+  .animate-ripple-effect {
+    animation: ripple-effect 0.6s linear;
+  }
+}

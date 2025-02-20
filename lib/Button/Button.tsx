@@ -8,13 +8,14 @@ import React, {
 import { twMerge } from 'tailwind-merge';
 import { cva, type VariantProps } from 'class-variance-authority';
 import type { BaseButtonProps } from './Button.type';
+import RippleWrapper from '../utils/wrapper/RippleWrapper';
 
 /* --------------------------------------
  * 建立 cva 样式
  * ------------------------------------ */
 const buttonStyles = cva(
   // 基底樣式 (含 disabled 樣式、focus 樣式)
-  'relative overflow-hidden inline-flex items-center justify-center font-medium \
+  'relative inline-flex items-center justify-center font-medium \
    focus:outline-none rounded-md transition-colors duration-200 \
    disabled:opacity-50 disabled:pointer-events-none \
    focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500',
@@ -442,7 +443,7 @@ export const Button = forwardRef<
 
     /* ------------------ 最終渲染 <a> or <button> ------------------ */
     if (href) {
-      // <a> link button 請參考antd 原始button props type
+      // TODO: <a> link button 請參考antd 原始button props type
       return (
         <a
           ref={ref as React.Ref<HTMLAnchorElement>}
@@ -458,19 +459,20 @@ export const Button = forwardRef<
       );
     }
 
-    // <button> native button
     return (
-      <button
-        ref={ref as React.Ref<HTMLButtonElement>}
-        type={htmlType}
-        disabled={disabled || isLoading}
-        onClick={onClick}
-        className={computedClassName}
-        style={styles?.button}
-        {...(rest as Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type' | 'onClick'>)}
-      >
-        {content}
-      </button>
+      <RippleWrapper disabled={disabled}>
+        <button
+          ref={ref as React.Ref<HTMLButtonElement>}
+          type={htmlType}
+          disabled={disabled || isLoading}
+          onClick={onClick}
+          className={computedClassName}
+          style={styles?.button}
+          {...(rest as Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type' | 'onClick'>)}
+        >
+          {content}
+        </button>
+      </RippleWrapper>
     );
   },
 );

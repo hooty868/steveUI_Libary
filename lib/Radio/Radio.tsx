@@ -4,15 +4,19 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import RippleWrapper from '../utils/wrapper/RippleWrapper';
 
 export interface BaseRadioProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
-  /** 是否禁用 */
-  disabled?: boolean;
-  /** 是否被勾選（受控模式） */
+  /** Get focus when component mounted */
+  autoFocus?: boolean;
+  /** Whether the radio is selected */
   checked?: boolean;
-  /** 預設是否勾選（非受控模式） */
+  /** Initial selected state */
   defaultChecked?: boolean;
-  /** 變更時的 callback */
+  /** Disable radio */
+  disabled?: boolean;
+  /** Value for comparison to determine selection */
+  value?: string | number;
+  /** Change callback */
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  /** 顯示的文字或任意 node */
+  /** Display text or any node */
   children?: React.ReactNode;
 }
 
@@ -23,13 +27,8 @@ const radioStyles = cva('inline-flex items-center cursor-pointer select-none rel
       primary: '',
       danger: '',
     },
-    size: {
-      small: '',
-      middle: '',
-      large: '',
-    },
     disabled: {
-      true: 'cursor-not-allowed opacity-60',
+      true: 'cursor-not-allowed opacity-40',
       false: '',
     },
     checked: {
@@ -41,36 +40,43 @@ const radioStyles = cva('inline-flex items-center cursor-pointer select-none rel
     {
       color: 'primary',
       checked: true,
-      class: 'text-[#1677ff]',
+      class: '[&>div>input]:border-[#1677ff] [&>div>input]:checked:bg-[#1677ff]',
     },
     {
       color: 'danger',
       checked: true,
-      class: 'text-[#ff4d4f]',
+      class: '[&>div>input]:border-[#ff4d4f] [&>div>input]:checked:bg-[#ff4d4f]',
+    },
+    {
+      disabled: true,
+      checked: false,
+      class: '[&>div>input]:bg-[rgba(0,0,0,0.05)]',
+    },
+    {
+      disabled: true,
+      checked: true,
+      class:
+        '[&>div>input]:checked:border-gray-300 [&>div>input]:checked:bg-[rgba(0,0,0,0.05)] [&>div>input]:after:bg-black',
     },
   ],
   defaultVariants: {
     color: 'default',
-    size: 'middle',
     disabled: false,
     checked: false,
   },
 });
 
-/**
- * - 除了直接 forwardRef 到 <input type="radio" />
- * - 可以由外部決定受控 or 非受控
- */
 export const Radio = forwardRef<
   HTMLInputElement,
   BaseRadioProps & VariantProps<typeof radioStyles>
 >((props, ref) => {
   const {
     color,
-    size,
+    autoFocus,
     disabled = false,
     checked,
     defaultChecked,
+    value,
     onChange,
     children,
     className,
@@ -92,11 +98,9 @@ export const Radio = forwardRef<
     [isControlled, onChange],
   );
 
-  // 生成最終 label className
   const labelClassName = twMerge(
     radioStyles({
       color,
-      size,
       disabled,
       checked: finalChecked,
     }),
@@ -111,13 +115,14 @@ export const Radio = forwardRef<
           type="radio"
           disabled={disabled}
           checked={finalChecked}
+          value={value}
+          autoFocus={autoFocus}
           onChange={handleChange}
-          className="mr-2 h-4 w-4 cursor-pointer accent-current"
-          // TODO: 可以用 accent-color / appearance-none 做更進階自訂
+          className="relative h-4 w-4 cursor-pointer appearance-none rounded-full border-1 border-gray-300 checked:border-transparent checked:bg-current after:absolute after:left-1/2 after:top-1/2 after:h-[50%] after:w-[50%] after:-translate-x-1/2 after:-translate-y-1/2 after:rounded-full after:bg-white after:opacity-0 checked:after:opacity-100"
           {...rest}
         />
       </RippleWrapper>
-      <span>{children}</span>
+      <span className="ml-2">{children}</span>
     </label>
   );
 });
